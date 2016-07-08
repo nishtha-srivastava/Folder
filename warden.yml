@@ -1,0 +1,141 @@
+compilation:
+  cloud_properties:
+    name: random
+  network: services_z1
+  reuse_compilation_vms: true
+  workers: 2
+director_uuid: 1814d7a5-6a04-4201-adb1-d6e38cb4fb14
+jobs:
+- instances: 1
+  name: postgresql_master_z1
+  networks:
+  - name: services_z1
+    static_ips:
+    - 10.244.2.2
+  persistent_disk: 200
+  properties:
+    postgresql:
+      is_master: true
+      leader_address: 10.244.2.6
+  resource_pool: small_z1
+  template: postgresql
+- instances: 1
+  name: postgresql_slave_z1
+  networks:
+  - name: services_z1
+    static_ips:
+    - 10.244.2.6
+  persistent_disk: 200
+  properties:
+    postgresql:
+      leader_address: 10.244.2.2
+  resource_pool: small_z1
+  template: postgresql
+  update:
+    canaries: 10
+name: postgresql
+networks:
+- name: services_z1
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.2.0/30
+    reserved:
+    - 10.244.2.1
+    static:
+    - 10.244.2.2
+  - cloud_properties:
+      name: random
+    range: 10.244.2.4/30
+    reserved:
+    - 10.244.2.5
+    static: 
+    - 10.244.2.6
+  - cloud_properties:
+      name: random
+    range: 10.244.2.8/30
+    reserved:
+    - 10.244.2.9
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.12/30
+    reserved:
+    - 10.244.2.13
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.16/30
+    reserved:
+    - 10.244.2.17
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.20/30
+    reserved:
+    - 10.244.2.21
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.24/30
+    reserved:
+    - 10.244.2.25
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.28/30
+    reserved:
+    - 10.244.2.29
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.32/30
+    reserved:
+    - 10.244.2.33
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.36/30
+    reserved:
+    - 10.244.2.37
+    static: []
+properties:
+  postgresql:
+    admin_user: pgadmin
+    admin_user_password: Pg@dmin!23
+    database_name: psql_sic
+    database_user: pguser
+    database_user_password: Pguser!23
+    master_eip: 10.244.2.2
+    max_connections: 500
+    max_wal_senders: 1
+    riemann_host: 10.1.3.1
+    riemann_port: 5555
+    shared_buffers: 1GB
+    slave_eip: 10.244.2.6
+    wal_keep_segments: 5000
+  swift_backup_credentials:
+    password: sfasdfaf234234
+    username: swift-dev07
+  syslog:
+    active: false
+  syslog_ingestor:
+    host: 10.1.4.3
+releases:
+- name: postgresql
+  version: 33
+resource_pools:
+- cloud_properties:
+    name: random
+  name: small_z1
+  network: services_z1
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    version: latest
+update:
+  canaries: 1
+  canary_watch_time: 1000-30000
+  max_in_flight: 50
+  serial: true
+  update_watch_time: 1000-30000
+
